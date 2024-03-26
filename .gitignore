@@ -1,0 +1,6 @@
+
+*.pdf
+/A2/__pycache__
+/A2/cifar-10-batches-py
+*.pyc
+*.gz
