@@ -1,4 +1,4 @@
-# Revision for Assignment 1
+# Revision
 
 ### KNN 
 
@@ -17,6 +17,10 @@
 
 ### Linear Classifier
 
+We need activation functions, and the most common one is ReLU.
+
+
+
 ##### Loss funtions
 
 1. SVM loss: $\sum_{j \neq y_i} \max(0,s_j-s_{y_i}+1)$
@@ -29,9 +33,19 @@
 
 ​	Intuition: result from maximum likelihood estimation.
 
+### Use backprop Implentaion to simplify the calculation.
+
+(Not in Assignment 1 qaq.)
 
 
- 
+
+Attention: We must use implicit multiplication of Jacobian to avoid explicitly forming it.(内存占用)
+
+
+
+# Q&A for Assignment 1
+
+
 
 ### Q1: What if we find a W s.t. SVM loss = 0?
 
@@ -57,3 +71,10 @@ $softmax(x) = \frac{e^{x_i}}{\sum_{j=1}^n e^{x_j}}$
 
 $x_i -= \max\{x_j\}$，这样最大项是0，不会上溢，分母存在1这项，不会下溢！
 
+
+
+### Q2: Feature  methods？
+
+Roughly speaking, HOG should capture the texture of the image while ignoring color information, and the color histogram represents the color of the input image while ignoring texture. As a result, we expect that using both together ought to work better than using either alone. 
+
+Using the extracted features, we can get great improvements on the accuarcy.
