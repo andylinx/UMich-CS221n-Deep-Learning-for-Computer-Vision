@@ -50,13 +50,17 @@ AdaGrad 根据平方梯度的整个历史收缩学习率，可能使得学习率
 
 RMSProp算法不是像AdaGrad算法那样暴力直接的累加平方梯度，而是加了一个衰减系数来控制历史信息的获取多少。
 
-
+![image-20240402165935952](C:\Users\13123\AppData\Roaming\Typora\typora-user-images\image-20240402165935952.png)
 
 ### Adam
 
 ![image-20240327184454163](https://img-blog.csdnimg.cn/direct/5338763224f34d3987cff474c2ba130e.png)
 
 对超参数的鲁棒性更强
+
+![image-20240402170252959](C:\Users\13123\AppData\Roaming\Typora\typora-user-images\image-20240402170252959.png)
+
+
 
 
 

@@ -76,6 +76,12 @@ behaves differently during training and testing
 
 ![请添加图片描述](https://img-blog.csdnimg.cn/direct/ceb8ed0e015a4a2cb484c3c56b978e01.png)
 
+###### Implementation in Assignment2
+
+求反向传播的方式，画图求解，倒着处理每一条边加起来，可以从两个维度开始推广，并且通过矩阵的size来进行助力。
+
+
+
 
 
 ## Architechtures (History of ImageNet Challenge)
