@@ -26,12 +26,7 @@ def content_loss(content_weight, content_current, content_original):
     """
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    loss = torch.sum(content_weight * (content_current - content_original)**2)
-
-    # or
-    # loss = content_weight * ((content_current - content_original)**2).sum()
-
-    return loss    
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -51,24 +46,7 @@ def gram_matrix(features, normalize=True):
     """
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    N, C, H, W = features.size()
-    features = features.view(N, C, H * W)
-    
-    if normalize:
-        return torch.bmm(features, torch.transpose(features, 1, 2)) / (H * W * C)
-    
-    else:
-        return torch.bmm(features, torch.transpose(features, 1, 2))
-
-    # or
-    # features = features.reshape(N, C, -1) 
-    # gram_matrix = torch.zeros([N, C, C])
-    #
-    # for i in range(N):
-    #     gram_matrix[i, :] = torch.mm(features[i, :], features[i, :].t() )
-    #        
-    # if normalize:
-    #     gram_matrix /= float(H * W * C)         
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -95,21 +73,7 @@ def style_loss(feats, style_layers, style_targets, style_weights):
     # not be very much code (~5 lines). You will need to use your gram_matrix function.
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    style_loss = 0
-    
-    for i in range(len(style_layers)):
-        L = style_layers[i]
-        G = gram_matrix(feats[L])
-        style_loss += style_weights[i] * ((G - style_targets[i])**2).sum()
-        
-    return style_loss
-
-    # or using enumerate()...
-    # loss = 0
-    # for i,layer in enumerate(style_layers):
-    #     current = gram_matrix(feats[layer])
-    #     loss += style_weights[i] * torch.sum((current-style_targets[i])**2)
-    # return loss
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -128,14 +92,9 @@ def tv_loss(img, tv_weight):
     # Your implementation should be vectorized and not require any loops!
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    row_diff = img[:, :, 1:, :] - img[:, :, :-1, :]
-
-    column_diff = img[:, :, :, 1:] - img[:, :, :, :-1]
-
-    return tv_weight * (torch.sum(row_diff**2) + torch.sum(column_diff**2))
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
 def preprocess(img, size=512):
     """ Preprocesses a PIL JPG Image object to become a Pytorch tensor
         that is ready to be used as an input into the CNN model.

@@ -151,33 +151,36 @@ class CaptioningRNN(object):
         ############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        # forward pass for loss generation
-        # (1)
-        h0, cache_affine = affine_forward(features, W_proj, b_proj)
-        # (2)
-        embedded_captions_in, cache_embed_in = word_embedding_forward(captions_in, W_embed)
-        # (3)
-        # select the appropriate forward function by creating a dict with function names
-        # and looking it up using "self.cell_type"
-        forward_net = {"lstm": lstm_forward, "rnn": rnn_forward}[self.cell_type]
-        h, cache_rnn = forward_net(embedded_captions_in, h0, Wx, Wh, b)
-        # (4)
-        y, cache_temporal = temporal_affine_forward(h, W_vocab, b_vocab)
-        # (5)
-        loss, dout = temporal_softmax_loss(y, captions_out, mask)
+        h0 = features.dot(W_proj) + b_proj
+        x, cache_embed = word_embedding_forward(captions_in, W_embed)
 
-        # backward pass for gradients
-        # (4)
-        dout, grads["W_vocab"], grads["b_vocab"] = temporal_affine_backward(dout, cache_temporal)
-        # (3)
-        # select the appropriate backward function by creating a dict with function names
-        # and looking it up using "self.cell_type"
-        backward_net = {"lstm": lstm_backward, "rnn": rnn_backward}[self.cell_type]
-        dout, dh0, grads["Wx"], grads["Wh"], grads["b"] = backward_net(dout, cache_rnn)
-        # (2)
-        grads["W_embed"] = word_embedding_backward(dout, cache_embed_in)
-        # (1)
-        _, grads["W_proj"], grads["b_proj"] = affine_backward(dh0, cache_affine)        
+        if self.cell_type == 'rnn':
+          h, cache_rnn = rnn_forward(x, h0, Wx, Wh, b)
+        else:
+          h, cache_lstm = lstm_forward(x, h0, Wx, Wh, b)
+
+        out, cache_vocab = temporal_affine_forward(h, W_vocab, b_vocab)
+
+        loss, dout = temporal_softmax_loss(out, captions_out, mask)
+
+
+        # Calculate gradients 
+        
+        dout, dW_vocab, db_vocab = temporal_affine_backward(dout, cache_vocab)
+
+        if self.cell_type == 'rnn':
+          dout, dh0, dWx, dWh, db = rnn_backward(dout, cache_rnn)
+        else:
+          dout, dh0, dWx, dWh, db = lstm_backward(dout, cache_lstm)
+        
+        dW_embed = word_embedding_backward(dout, cache_embed)
+
+        dW_proj = features.T.dot(dh0)
+        db_proj = dh0.sum(axis=0)
+
+        grads= {'W_vocab' : dW_vocab, 'b_vocab' : db_vocab, 'Wx' : dWx, 'W_embed' : dW_embed,
+                'Wh' : dWh, 'b' : db, 'W_proj' : dW_proj, 'b_proj' : db_proj}
+
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         ############################################################################
@@ -245,44 +248,24 @@ class CaptioningRNN(object):
         ###########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        h = features.dot(W_proj) + b_proj
-        c = np.zeros(h.shape)
-        V, W = W_embed.shape
+        h0 = features.dot(W_proj) + b_proj
+
+        _, W = W_embed.shape
+
         x = np.ones((N, W)) * W_embed[self._start]
 
-        for t in range(max_length):
-            if self.cell_type == "rnn":
-               next_h, _ = rnn_step_forward(x, h, Wx, Wh, b)
-            else:
-               next_h, next_c, _ = lstm_step_forward(x, h, c, Wx, Wh, b)
-               c = next_c
-            out = next_h.dot(W_vocab) + b_vocab
-            captions[:, t] = out.argmax(axis=1)
-            x = W_embed[captions[:, t]] # or W_embed[captions[:, t], :]
-            h = next_h     
+        for i in range(max_length):
+          if self.cell_type == 'rnn':
+            h0, _ = rnn_step_forward(x, h0, Wx, Wh, b)
+          # Attention : lstm no implemented yet
 
-        """       
-        h = features.dot(W_proj) + b_proj
-        start = (self._start * np.ones(N)).astype(np.int32)
-        x = W_embed[start, :]
+          out = h0.dot(W_vocab) + b_vocab
 
-        forward_step = {'lstm': lstm_step_forward, 'rnn': rnn_step_forward}[self.cell_type]
+          max_id = out.argmax(axis=1)
+          captions[:, i] = max_id
+          x = W_embed[max_id]
 
-        for t in range(max_length):
-            args = {"lstm": {"x": x, "prev_h": h, "prev_c": np.zeros(h.shape) \
-                    if t == 0 else c, "Wx": Wx, "Wh": Wh, "b": b}, \
-                    "rnn": {"x": x, "prev_h": h, "Wx": Wx, "Wh": Wh, "b": b}}[self.cell_type]
-            retval = forward_step(**args)
-            if self.cell_type == "rnn":
-                next_h, _ = retval
-            else:
-                next_h, next_c, _ = retval
-            y = h.dot(W_vocab) + b_vocab
-            captions[:, t] = y.argmax(axis=1)
-            x = W_embed[captions[:, t], :] # or W_embed[captions[:, t]]
-            c = next_c
-            h = next_h            
-        """
+
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         ############################################################################
         #                             END OF YOUR CODE                             #

@@ -16,7 +16,7 @@ def leaky_relu(x, alpha=0.01):
     # TODO: implement leaky ReLU
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    return tf.maximum(alpha*x, x)
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
@@ -35,7 +35,7 @@ def sample_noise(batch_size, dim, seed=None):
     # TODO: sample and return noise
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    return tf.random.uniform([batch_size,dim], -1, 1)
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
@@ -60,16 +60,7 @@ def discriminator(seed=None):
     ##############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    model = tf.keras.models.Sequential()
-
-    # (1) Fully connected layer from size 784 to 256 with LeakyReLU with alpha 0.01
-    model.add(tf.keras.layers.Dense(units=256, input_shape=(784,), activation=leaky_relu))
-
-    # (2) Fully connected layer from 256 to 256 with LeakyReLU with alpha 0.01
-    model.add(tf.keras.layers.Dense(units=256, activation=leaky_relu))
-
-    # (3) Fully connected layer from 256 to 1
-    model.add(tf.keras.layers.Dense(units=1))
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     ##############################################################################
@@ -96,17 +87,8 @@ def generator(noise_dim=NOISE_DIM, seed=None):
     # HINT: tf.keras.models.Sequential might be helpful.                         #
     ##############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-    
-    model = tf.keras.models.Sequential()
 
-    # (1) Fully connected layer from noise.shape to 1024 with ReLU
-    model.add(tf.keras.layers.Dense(units=1024, input_shape=(noise_dim,), activation=tf.nn.relu))
-    
-    # (2) Fully connected layer from 1024 to 1024 with ReLU
-    model.add(tf.keras.layers.Dense(units=1024, activation=tf.nn.relu))
-    
-    # (3) Fully connected layer from 1024 to 784 with TanH (To restrict to [-1,1])
-    model.add(tf.keras.layers.Dense(units=784, activation=tf.nn.tanh))
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     ##############################################################################
@@ -128,13 +110,8 @@ def discriminator_loss(logits_real, logits_fake):
     loss = None
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    cross_entropy_real = tf.nn.sigmoid_cross_entropy_with_logits(labels=tf.ones_like(logits_real), 
-                                                                 logits=logits_real)
-    cross_entropy_non_fake = tf.nn.sigmoid_cross_entropy_with_logits(labels=tf.zeros_like(logits_fake), 
-                                                                     logits=logits_fake)
-    
-    loss = tf.reduce_mean(cross_entropy_real) + tf.reduce_mean(cross_entropy_non_fake)
-        
+    pass
+
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     return loss
 
@@ -151,10 +128,7 @@ def generator_loss(logits_fake):
     loss = None
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    cross_entropy_fake = tf.nn.sigmoid_cross_entropy_with_logits(labels=tf.ones_like(logits_fake), 
-                                                                 logits=logits_fake)
-    
-    loss = tf.reduce_mean(cross_entropy_fake)
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     return loss
@@ -176,9 +150,8 @@ def get_solvers(learning_rate=1e-3, beta1=0.5):
     G_solver = None
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    D_solver = tf.keras.optimizers.Adam(learning_rate=learning_rate, beta_1=beta1)
-    G_solver = tf.keras.optimizers.Adam(learning_rate=learning_rate, beta_1=beta1)
-    
+    pass
+
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     return D_solver, G_solver
 
@@ -196,8 +169,8 @@ def ls_discriminator_loss(scores_real, scores_fake):
     loss = None
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    loss = 0.5 * (tf.reduce_mean((scores_real - 1) ** 2) + tf.reduce_mean((scores_fake ** 2)))
-    
+    pass
+
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     return loss
 
@@ -214,8 +187,8 @@ def ls_generator_loss(scores_fake):
     loss = None
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    loss = 0.5 * tf.reduce_mean((scores_fake - 1) ** 2)
-    
+    pass
+
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     return loss
 
@@ -237,39 +210,7 @@ def dc_discriminator():
     ##############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    model = tf.keras.models.Sequential()
-
-    # Unflatten input
-    # e.g., model.add(tf.keras.layers.Reshape((3, 4), input_shape=(12,)))
-    # yields model.output_shape == (None, 3, 4), where "None" is the batch size, per
-    # https://www.tensorflow.org/api_docs/python/tf/keras/layers/Reshape
-    model.add(tf.keras.layers.Reshape((28, 28, 1), input_shape=(784,)))
-    
-    # (1) 32 Filters, 5x5, Stride 1, Leaky ReLU(alpha=0.01) -> (None, 24, 24, 32)
-    # feed in leaky_relu() as a parameter to the layers to make it an activation function
-    # padding='valid' is the default
-    model.add(tf.keras.layers.Conv2D(filters=32, kernel_size=5, strides=1, 
-                                     input_shape=(28, 28, 1), activation=leaky_relu))
-    
-    # (2) Max Pool 2x2, Stride 2 -> (None, 12, 12, 32)
-    model.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
-    
-    # (3) 64 Filters, 5x5, Stride 1, Leaky ReLU(alpha=0.01) -> (None, 8, 8, 64)
-    model.add(tf.keras.layers.Conv2D(filters=64, kernel_size=5, strides=1, 
-                                     activation=leaky_relu))
-    
-    # (4) Max Pool 2x2, Stride 2 -> (None, 4, 4, 64)
-    model.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
-    
-    # (5) Flatten -> (None, 4*4*64)
-    model.add(tf.keras.layers.Flatten())
-    #or model.add(tf.keras.layers.Reshape((4*4*64,), input_shape=(4,4,64)))
-    
-    # (6) Fully Connected size 4 x 4 x 64, Leaky ReLU(alpha=0.01)
-    model.add(tf.keras.layers.Dense(units=4*4*64, activation=leaky_relu))
-    
-    # (7) Fully Connected size 1
-    model.add(tf.keras.layers.Dense(units=1))
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     ##############################################################################
@@ -291,38 +232,7 @@ def dc_generator(noise_dim=NOISE_DIM):
     # TODO: implement architecture
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    # (1) Fully connected of size 1024, ReLU
-    model.add(tf.keras.layers.Dense(units=1024, input_shape=(noise_dim,), activation=tf.nn.relu))
-    
-    # (2) BatchNorm
-    model.add(tf.keras.layers.BatchNormalization())#training=True))
-    
-    # (3) Fully connected of size 7 x 7 x 128, ReLU
-    model.add(tf.keras.layers.Dense(units=7*7*128, activation=tf.nn.relu))
-    
-    # (4) BatchNorm
-    model.add(tf.keras.layers.BatchNormalization())#training=True))
-    
-    # (5) Resize into Image Tensor
-    model.add(tf.keras.layers.Reshape((7, 7, 128)))#, input_shape=(6272,)))
-
-    # (6) 64 conv2d^T (transpose) filters of 4x4, stride 2, ReLU
-    model.add(tf.keras.layers.Conv2DTranspose(filters=64, kernel_size=4,
-                                              strides=2, padding='same', 
-                                              input_shape=(7, 7, 128),
-                                              activation=tf.nn.relu))
-    
-    # (7) BatchNorm
-    model.add(tf.keras.layers.BatchNormalization())#training=True)
-    
-    # (8) 1 conv2d^T (transpose) filter of 4x4, stride 2, TanH
-    model.add(tf.keras.layers.Conv2DTranspose(filters=1, kernel_size=4, 
-                                              strides=2, padding='same', 
-                                              activation=tf.nn.tanh))
-    
-    # (*) Flatten output
-    model.add(tf.keras.layers.Reshape((784,)))#, input_shape=(28,28,1)))
-    # or model.add(tf.keras.layers.Reshape((-1, 784)))#, input_shape=(28,28,1)))
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     return model

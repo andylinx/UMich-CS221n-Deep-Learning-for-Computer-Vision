@@ -35,30 +35,7 @@ def compute_saliency_maps(X, y, model):
     ###############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    X_var = tf.Variable(X, dtype="float32")
-    y_var = tf.Variable(y, dtype="int32")
-    
-    # 1) Define a gradient tape object and watch input Image variable             #
-    with tf.GradientTape() as tape:
-        # keep track of our gradients
-        tape.watch(X_var)
-
-        # 2) Compute the “loss” for the batch of given input images.                  #
-        #    - get scores output by the model for the given batch of input images     #
-        # make a prediction using the model and then calculate the loss
-        # Make sure the model is in "test" mode        
-        scores = model(X_var, training=False)
-        
-        # use tf.gather_nd or tf.gather to get correct scores                    #
-        correct_scores = tf.gather_nd(scores, tf.stack((tf.range(X_var.shape[0], dtype="int32"), y_var), axis=1))
-    
-    # 3) Use the gradient() method of the gradient tape object to compute the     #
-    #    gradient of the loss with respect to the image                           #
-    grads = tape.gradient(correct_scores, X_var)
-
-    # 4) Finally, process the returned gradient to compute the saliency map.      #
-    # note that torch uses the channel-first notation so axis=3
-    saliency = np.abs(grads).max(axis=3)
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     ##############################################################################
@@ -106,41 +83,14 @@ def make_fooling_image(X, target_y, model):
     # progress over iterations to check your algorithm.                          #
     ##############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-    
-    X_fooling_var = tf.Variable(X_fooling)
 
-    for i in range(100): # try out 100 iterations max
-        with tf.GradientTape() as tape:
-            # keep track of our gradients
-            tape.watch(X_fooling_var)
-
-            # make a prediction using the model
-            # loss is the score we want to maximize            
-            scores = model(X_fooling_var, training=False)
-
-            # get the predicted class
-            idx = tf.math.argmax(scores, axis=1) # scores is (N, C)
-
-            if (idx != target_y):
-                # use the gradient() method of the gradient tape object to compute the
-                # gradient of the loss with respect to the image
-                grads = tape.gradient(scores[:, target_y], X_fooling_var)
-                
-                # when computing an update step, first normalize the gradient
-                # default for torch.norm is "frobenius norm" for matrices and "2-norm" for vectors
-                dX = learning_rate * grads/tf.norm(grads, ord=2)
-
-                # perform gradient ascent
-                X_fooling_var = X_fooling_var + dX
-            else:
-                # stop when the model is fooled
-                break 
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     ##############################################################################
     #                             END OF YOUR CODE                               #
     ##############################################################################
-    return X_fooling_var
+    return X_fooling
 
 def class_visualization_update_step(X, model, target_y, l2_reg, learning_rate):
     ########################################################################
@@ -153,30 +103,14 @@ def class_visualization_update_step(X, model, target_y, l2_reg, learning_rate):
     ########################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    X_var = tf.Variable(X)
+    pass
 
-    with tf.GradientTape() as tape:
-        # keep track of our gradients
-        tape.watch(X_var)
-
-        # generate scores
-        scores = model(X_var, training=False)
-
-        # compute the gradient of the score for the class target_y with the L2 reg
-        loss = scores[:, target_y] - l2_reg * tf.square(tf.norm(X_var, ord=2))
-
-        grads = tape.gradient(loss, X_var)
-
-    # make a gradient step on the image using the learning rate and 
-    # gradient of of the score for the class target_y with respect to the pixels of the image
-    X_var = X_var + learning_rate * grads 
-    
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
 
-    return X_var
+    return X
 
 def blur_image(X, sigma=1):
     X = gaussian_filter1d(X, sigma, axis=1)
