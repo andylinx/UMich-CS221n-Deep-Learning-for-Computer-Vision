@@ -17,6 +17,10 @@ Homework and notes for EECS 498.008 / CS231n Deep Learning for Computer Vision.
 | Lecture 9: Object Dectection adn Image Segmentation     | 4.13     |
 | Lecture 10: Recurrent Nerual Network                    | 4.15     |
 | Lecture 11: Attention and Transformers                  | 4.18     |
+| Lecture 12: Video Understanding                         | 4.26     |
+| Lecture 13: Generative Models                           | 4.27     |
+|                                                         |          |
+|                                                         |          |
 | Lecture 16: 3D vision                                   | 4.24     |
 
 | Assignment                            | 完成日期 |
@@ -28,5 +32,6 @@ Homework and notes for EECS 498.008 / CS231n Deep Learning for Computer Vision.
 | Assignment2 PartIII :  3 layer - CNN | 4.7 |
 | Assignment3 PartI: RNN captioning | 4.23 |
 | Assignment3 PartII: LSTM captioning | 4.23 |
-| Assignment3 PartII: Network Visualization (Pytorch) | 4.25 |
-
+| Assignment3 PartIII: Network Visualization (Pytorch) | 4.25 |
+| Assignment3 PartIV: Style Transfer (Pytorch) | 4.26 |
+| Assignment3 PartV: GANs (Pytorch) | 4.28 |
