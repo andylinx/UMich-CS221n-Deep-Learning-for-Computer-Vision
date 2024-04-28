@@ -249,6 +249,7 @@ class CaptioningRNN(object):
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         h0 = features.dot(W_proj) + b_proj
+        c0 = np.zeros_like(h0)
 
         _, W = W_embed.shape
 
@@ -257,7 +258,8 @@ class CaptioningRNN(object):
         for i in range(max_length):
           if self.cell_type == 'rnn':
             h0, _ = rnn_step_forward(x, h0, Wx, Wh, b)
-          # Attention : lstm no implemented yet
+          else:
+            h0, c0, _ = lstm_step_forward(x, h0, c0, Wx, Wh, b)
 
           out = h0.dot(W_vocab) + b_vocab
 

@@ -25,8 +25,10 @@ def content_loss(content_weight, content_current, content_original):
     - scalar content loss
     """
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-    pass
+    (_, C_l, H_l, W_l) = content_current.shape
+    content_current = content_current.view(C_l, H_l * W_l)
+    content_original = content_original.view(C_l, H_l * W_l)
+    return content_weight * ((content_current - content_original) ** 2) .sum()
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -46,11 +48,17 @@ def gram_matrix(features, normalize=True):
     """
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    pass
-
+    N, C, H, W = features.shape
+    f = features.view(N, C, H * W)
+    f_r = f.permute(0, 2, 1)
+    gram = torch.matmul(f, f_r)
+    if normalize == True:
+      gram = gram / (H * W * C)
+    
+    return gram
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-# Now put it together in the style_loss function...
+# Now put it together in the style_loss function.
 def style_loss(feats, style_layers, style_targets, style_weights):
     """
     Computes the style loss at a set of layers.
@@ -73,8 +81,12 @@ def style_loss(feats, style_layers, style_targets, style_weights):
     # not be very much code (~5 lines). You will need to use your gram_matrix function.
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    pass
+    style_loss = 0
+    for i, idx in enumerate(style_layers):
+      now = gram_matrix(feats[idx].clone())
+      style_loss += style_weights[i] * ((now - style_targets[i ]) ** 2).sum()
 
+    return style_loss
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 def tv_loss(img, tv_weight):
@@ -91,9 +103,15 @@ def tv_loss(img, tv_weight):
     """
     # Your implementation should be vectorized and not require any loops!
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+    _, _, H, W = img.shape
+    x1 = img[:, :, 1 : H, :]
+    x2 = img[:, :, 0 : H - 1, :]
+    y1 = img[:, :, :, 1 : W]
+    y2 = img[:, :, :, 0 : W - 1]
 
-    pass
+    loss = tv_weight * ( ((x1 - x2) ** 2).sum() + ((y1 - y2) ** 2).sum() )
 
+    return loss
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 def preprocess(img, size=512):
     """ Preprocesses a PIL JPG Image object to become a Pytorch tensor
