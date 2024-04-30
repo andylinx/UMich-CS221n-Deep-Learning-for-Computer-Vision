@@ -19,9 +19,8 @@ Homework and notes for EECS 498.008 / CS231n Deep Learning for Computer Vision.
 | Lecture 11: Attention and Transformers                  | 4.18     |
 | Lecture 12: Video Understanding                         | 4.26     |
 | Lecture 13: Generative Models                           | 4.27     |
-|                                                         |          |
-|                                                         |          |
-| Lecture 16: 3D vision                                   | 4.24     |
+| Lecture 14: Reinforcement Learning                      | 4.30     |
+| Lecture 15: 3D vision                                   | 4.24     |
 
 | Assignment                            | 完成日期 |
 | ------------------------------ | -------- |
@@ -35,3 +34,4 @@ Homework and notes for EECS 498.008 / CS231n Deep Learning for Computer Vision.
 | Assignment3 PartIII: Network Visualization (Pytorch) | 4.25 |
 | Assignment3 PartIV: Style Transfer (Pytorch) | 4.26 |
 | Assignment3 PartV: GANs (Pytorch) | 4.28 |
+
